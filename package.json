@@ -1,20 +1,20 @@
 {
-  "name": "rbac-core",
-  "version": "3.0.0",
-  "description": "RBAC core from hapi-rbac",
+  "name": "rbac-core-ng",
+  "version": "4.0.0",
+  "description": "RBAC core from hapi-rbac-ng",
   "main": "lib/index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
     "test": "lab -v",
-    "coverage": "lab -s -r lcov | coveralls",
+    "coverage": "lab -s -r lcov | ./node_modules/.bin/coveralls",
     "lint": "lab -dL",
     "indent": "js-beautify lib/index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/franciscogouveia/rbac-core.git"
+    "url": "git+https://github.com/johnmanko/rbac-core-ng.git"
   },
   "keywords": [
     "rbac"
@@ -24,21 +24,28 @@
     "email": "francisco@de-gouveia.eu",
     "url": "http://de-gouveia.eu"
   },
+  "contributors": [
+    { "name" : "John Manko",
+      "url" : "https://github.com/johnmanko"
+    }
+  ],
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/franciscogouveia/rbac-core/issues"
+    "url": "https://github.com/johnmanko/rbac-core-ng/issues"
   },
-  "homepage": "https://github.com/franciscogouveia/rbac-core#readme",
+  "homepage": "https://github.com/johnmanko/rbac-core-ng#readme",
   "dependencies": {
-    "async": "2.0.1",
-    "boom": "4.0.0",
-    "hoek": "^4.0.0",
-    "joi": "9.0.4"
+    "async": "3.2.3"
+  },
+  "peerDependencies": {
+    "@hapi/boom": "^9.1.4",
+    "@hapi/hoek": "^9.2.1",
+    "joi": "17.6.0"
   },
   "devDependencies": {
-    "code": "4.0.0",
-    "lab": "11.0.1",
-    "coveralls": "^2.11.9",
-    "js-beautify": "^1.6.2"
+    "@hapi/code": "8.0.7",
+    "@hapi/lab": "^24.6.0",
+    "coveralls": "^3.1.1",
+    "js-beautify": "^1.14.3"
   }
 }

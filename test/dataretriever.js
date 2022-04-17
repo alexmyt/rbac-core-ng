@@ -1,7 +1,7 @@
 'use strict';
 
-const Code = require('code');
-const Lab = require('lab');
+const Code = require('@hapi/code');
+const Lab = require('@hapi/lab');
 const DataRetrievalRouter = require('../').DataRetrievalRouter;
 
 const lab = exports.lab = Lab.script();
@@ -17,7 +17,7 @@ experiment('RBAC internal modular information retrieval', () => {
 
     const dataRetriever = new DataRetrievalRouter();
 
-    test('should register a valid retriever', () => {
+    test('should register a valid retriever', async () => {
 
         const retriever = (source, key, context) => {
 
@@ -26,14 +26,11 @@ experiment('RBAC internal modular information retrieval', () => {
 
         dataRetriever.register('test', retriever);
 
-        return dataRetriever.get('test:x')
-        .then((result) => {
-
-            expect(result).to.equal('key-x');
-        });
+        const result = await dataRetriever.get('test:x');
+        expect(result).to.equal('key-x');
     });
 
-    test('should override a valid retriever (single handler)', () => {
+    test('should override a valid retriever (single handler)', async () => {
 
         const retriever1 = (source, key, context) => {
 
@@ -48,14 +45,11 @@ experiment('RBAC internal modular information retrieval', () => {
         dataRetriever.register('test-override', retriever1);
         dataRetriever.register('test-override', retriever2, { override: true });
 
-        return dataRetriever.get('test-override:test')
-        .then((result) => {
-
-            expect(result).to.equal('test-2');
-        });
+        const result = await dataRetriever.get('test-override:test');
+        expect(result).to.equal('test-2');
     });
 
-    test('should not override a valid retriever (single handler)', (done) => {
+    test('should not override a valid retriever (single handler)', () => {
 
         const retriever1 = (source, key, context) => {
 
@@ -71,10 +65,9 @@ experiment('RBAC internal modular information retrieval', () => {
 
         expect(dataRetriever.register.bind(dataRetriever, 'test-override-error', retriever2)).to.throw();
 
-        done();
     });
 
-    test('should override a valid retriever (multiple handlers)', (done) => {
+    test('should override a valid retriever (multiple handlers)', async () => {
 
         const retriever1 = (source, key, context) => {
 
@@ -89,22 +82,19 @@ experiment('RBAC internal modular information retrieval', () => {
         dataRetriever.register(['test-override-multiple-1', 'test-override-multiple-2', 'test-override-multiple-3'], retriever1);
         dataRetriever.register(['test-override-multiple-2', 'test-override-multiple-4'], retriever2, { override: true }); // test-override-multiple-2 collides
 
-        return Promise.all([
+        const results = await Promise.all([
             dataRetriever.get('test-override-multiple-1:test'),
             dataRetriever.get('test-override-multiple-2:test'),
             dataRetriever.get('test-override-multiple-3:test'),
             dataRetriever.get('test-override-multiple-4:test')
-        ])
-        .then((results) => {
-
-            expect(results[0]).to.equal('test-1');
-            expect(results[1]).to.equal('test-2');
-            expect(results[2]).to.equal('test-1');
-            expect(results[3]).to.equal('test-2');
-        });
+        ]);
+        expect(results[0]).to.equal('test-1');
+        expect(results[1]).to.equal('test-2');
+        expect(results[2]).to.equal('test-1');
+        expect(results[3]).to.equal('test-2');
     });
 
-    test('should not override a valid retriever (multiple handlers)', (done) => {
+    test('should not override a valid retriever (multiple handlers)', () => {
 
         const retriever1 = (source, key, context) => {
 
@@ -119,10 +109,9 @@ experiment('RBAC internal modular information retrieval', () => {
         dataRetriever.register(['test-override-error-multiple-1', 'test-override-error-multiple-2', 'test-override-error-multiple-3'], retriever1);
         expect(dataRetriever.register.bind(dataRetriever, ['test-override-error-multiple-2', 'test-override-error-multiple-4'], retriever2)).to.throw(Error, 'There is a data retriever already registered for the source: test-override-error-multiple-2');
 
-        done();
     });
 
-    test('should register a valid asynchronous retriever', () => {
+    test('should register a valid asynchronous retriever', async () => {
 
         const retriever = (source, key, context, callback) => {
 
@@ -131,14 +120,11 @@ experiment('RBAC internal modular information retrieval', () => {
 
         dataRetriever.register('async-test', retriever);
 
-        return dataRetriever.get('async-test:x')
-        .then((result) => {
-
-            expect(result).to.equal('key-x');
-        });
+        const result = await dataRetriever.get('async-test:x');
+        expect(result).to.equal('key-x');
     });
 
-    test('should use parent asynchronous retriever', () => {
+    test('should use parent asynchronous retriever', async () => {
 
         const retriever = (source, key, context, callback) => {
 
@@ -149,14 +135,11 @@ experiment('RBAC internal modular information retrieval', () => {
 
         const childDataRetriever = dataRetriever.createChild();
 
-        return childDataRetriever.get('async-parent-test-1:x')
-        .then((result) => {
-
-            expect(result).to.equal('key-x');
-        });
+        const result = await childDataRetriever.get('async-parent-test-1:x');
+        expect(result).to.equal('key-x');
     });
 
-    test('should use parent synchronous retriever', () => {
+    test('should use parent synchronous retriever', async () => {
 
         const retriever = (source, key, context) => {
 
@@ -167,53 +150,41 @@ experiment('RBAC internal modular information retrieval', () => {
 
         const childDataRetriever = dataRetriever.createChild();
 
-        return childDataRetriever.get('sync-parent-test-1:x')
-        .then((result) => {
-
-            expect(result).to.equal('key-x');
-        });
+        const result = await childDataRetriever.get('sync-parent-test-1:x');
+        expect(result).to.equal('key-x');
     });
 
-    test('should return null if inexistent prefix on child and parent', () => {
+    test('should return null if inexistent prefix on child and parent', async () => {
 
         const childDataRetriever = dataRetriever.createChild();
 
-        return childDataRetriever.get('this-does-not-exist-1:x')
-        .then((result) => {
-
-            expect(result).to.not.exist();
-        });
+        const result = await childDataRetriever.get('this-does-not-exist-1:x');
+        expect(result).to.not.exist();
     });
 
-    test('should not allow using get with context', () => {
+    test('should not allow using get with context', async () => {
 
-        return dataRetriever.get('get-with-context', {})
-        .then((result) => {
-
-            fail("Should have rejected");
-        })
-        .catch((err) => {
-
+        try {
+            await dataRetriever.get('get-with-context', {});
+            fail('Should have rejected');
+        } catch (err) {
             expect(err).to.exist();
-            expect(err.message).to.exist().and.not.equal("Should have rejected");
-        });
+            expect(err.message).to.exist().and.not.equal('Should have rejected');
+        }
     });
 
-    test('should not allow using get without context', () => {
+    test('should not allow using get without context', async () => {
 
-        return dataRetriever.get('get-with-context')
-        .then((result) => {
-
-            fail("Should have rejected");
-        })
-        .catch((err) => {
-
+        try {
+            await dataRetriever.get('get-with-context');
+            fail('Should have rejected');
+        } catch (err) {
             expect(err).to.exist();
-            expect(err.message).to.exist().and.not.equal("Should have rejected");
-        });
+            expect(err.message).to.exist().and.not.equal('Should have rejected');
+        }
     });
 
-    test('should return err in callback when an error is thrown (sync)', () => {
+    test('should return err in callback when an error is thrown (sync)', async () => {
 
         const retriever = (source, key, context) => {
 
@@ -222,19 +193,16 @@ experiment('RBAC internal modular information retrieval', () => {
 
         dataRetriever.register('sync-test-err-1', retriever);
 
-        return dataRetriever.get('sync-test-err-1:x')
-        .then((result) => {
-
-            fail("Should have rejected");
-        })
-        .catch((err) => {
-
+        try {
+            await dataRetriever.get('sync-test-err-1:x');
+            fail('Should have rejected');
+        } catch (err) {
             expect(err).to.exist();
-            expect(err.message).to.exist().and.not.equal("Should have rejected");
-        });
+            expect(err.message).to.exist().and.not.equal('Should have rejected');
+        }
     });
 
-    test('should return err in callback when an error is thrown (async)', () => {
+    test('should return err in callback when an error is thrown (async)', async () => {
 
         const retriever = (source, key, context, callback) => {
 
@@ -243,15 +211,12 @@ experiment('RBAC internal modular information retrieval', () => {
 
         dataRetriever.register('async-test-err-1', retriever);
 
-        return dataRetriever.get('async-test-err-1:x')
-        .then((result) => {
-
-            fail("Should have rejected");
-        })
-        .catch((err) => {
-
+        try {
+            await dataRetriever.get('async-test-err-1:x');
+            fail('Should have rejected');
+        } catch (err) {
             expect(err).to.exist();
-            expect(err.message).to.exist().and.not.equal("Should have rejected");
-        });
+            expect(err.message).to.exist().and.not.equal('Should have rejected');
+        }
     });
 });

@@ -1,7 +1,7 @@
 'use strict';
 
-const Code = require('code');
-const Lab = require('lab');
+const Code = require('@hapi/code');
+const Lab = require('@hapi/lab');
 
 const lab = exports.lab = Lab.script();
 const experiment = lab.experiment;
@@ -11,7 +11,6 @@ const expect = Code.expect;
 
 const Rbac = require('../');
 const DataRetrievalRouter = require('../lib/DataRetrievalRouter');
-
 
 experiment('Policy set unit tests', () => {
 
@@ -58,7 +57,7 @@ experiment('Policy set unit tests', () => {
         ]
     };
 
-    test('should permit premium writer', (done) => {
+    test('should permit premium writer', () => {
 
         const information = {
             username: 'user00001',
@@ -73,11 +72,10 @@ experiment('Policy set unit tests', () => {
 
             expect(applies).to.exist().and.to.equal(Rbac.PERMIT);
 
-            done();
         });
     });
 
-    test('should deny blocked premium writer', (done) => {
+    test('should deny blocked premium writer', () => {
 
         const information = {
             username: 'bad_user',
@@ -92,11 +90,10 @@ experiment('Policy set unit tests', () => {
 
             expect(applies).to.exist().and.to.equal(Rbac.DENY);
 
-            done();
         });
     });
 
-    test('should deny publisher without premium', (done) => {
+    test('should deny publisher without premium', () => {
 
         const information = {
             username: 'user00002',
@@ -111,11 +108,10 @@ experiment('Policy set unit tests', () => {
 
             expect(applies).to.exist().and.to.equal(Rbac.DENY);
 
-            done();
         });
     });
 
-    test('should permit special publisher without premium', (done) => {
+    test('should permit special publisher without premium', () => {
 
         const information = {
             username: 'special_user',
@@ -130,11 +126,10 @@ experiment('Policy set unit tests', () => {
 
             expect(applies).to.exist().and.to.equal(Rbac.PERMIT);
 
-            done();
         });
     });
 
-    test('should permit special writer without premium', (done) => {
+    test('should permit special writer without premium', () => {
 
         const information = {
             username: 'special_user',
@@ -149,11 +144,10 @@ experiment('Policy set unit tests', () => {
 
             expect(applies).to.exist().and.to.equal(Rbac.PERMIT);
 
-            done();
         });
     });
 
-    test('should permit special publisher and writer without premium', (done) => {
+    test('should permit special publisher and writer without premium', () => {
 
         const information = {
             username: 'special_user',
@@ -168,11 +162,10 @@ experiment('Policy set unit tests', () => {
 
             expect(applies).to.exist().and.to.equal(Rbac.PERMIT);
 
-            done();
         });
     });
 
-    test('should deny publisher with premium', (done) => {
+    test('should deny publisher with premium', () => {
 
         const information = {
             username: 'user00003',
@@ -187,11 +180,10 @@ experiment('Policy set unit tests', () => {
 
             expect(applies).to.exist().and.to.equal(Rbac.DENY);
 
-            done();
         });
     });
 
-    test('should have error on missing policy', (done) => {
+    test('should have error on missing policy', () => {
 
         const information = {
             username: 'user00003',
@@ -204,31 +196,28 @@ experiment('Policy set unit tests', () => {
 
             expect(err).to.exist();
 
-            done();
         });
     });
 
-    test('should have error on missing data retriever', (done) => {
+    test('should have error on missing data retriever', () => {
 
         Rbac.evaluatePolicy(policySet, null, (err, applies) => {
 
             expect(err).to.exist();
 
-            done();
         });
     });
 
-    test('should have error on invalid data retriever', (done) => {
+    test('should have error on invalid data retriever', () => {
 
         Rbac.evaluatePolicy(policySet, 'test', (err, applies) => {
 
             expect(err).to.exist();
 
-            done();
         });
     });
 
-    test('should have error on invalid combinatory algorithm', (done) => {
+    test('should have error on invalid combinatory algorithm', () => {
 
         const invalidPolicySet = {
             target: [{ 'credentials:group': 'writer' }, { 'credentials:group': 'publisher' }], // writer OR publisher
@@ -244,7 +233,6 @@ experiment('Policy set unit tests', () => {
 
             expect(err).to.exist();
 
-            done();
         });
     });
 

@@ -1,7 +1,7 @@
 'use strict';
 
-const Code = require('code');
-const Lab = require('lab');
+const Code = require('@hapi/code');
+const Lab = require('@hapi/lab');
 
 const lab = exports.lab = Lab.script();
 const experiment = lab.experiment;
@@ -11,7 +11,6 @@ const expect = Code.expect;
 
 const Rbac = require('../');
 const DataRetrievalRouter = require('../lib/DataRetrievalRouter');
-
 
 experiment('Target unit tests (AND)', () => {
 
@@ -24,7 +23,7 @@ experiment('Target unit tests (AND)', () => {
         return context[key];
     }, { override: true });
 
-    test('should apply (full match)', (done) => {
+    test('should apply (full match)', () => {
 
         const information = {
             username: 'user00001',
@@ -38,11 +37,10 @@ experiment('Target unit tests (AND)', () => {
 
             expect(applies).to.exist().and.to.equal(true);
 
-            done();
         });
     });
 
-    test('should not apply (partial match)', (done) => {
+    test('should not apply (partial match)', () => {
 
         const information = {
             username: 'user00002',
@@ -56,11 +54,10 @@ experiment('Target unit tests (AND)', () => {
 
             expect(applies).to.exist().and.to.equal(false);
 
-            done();
         });
     });
 
-    test('should not apply (no match)', (done) => {
+    test('should not apply (no match)', () => {
 
         const information = {
             username: 'user00003',
@@ -74,7 +71,6 @@ experiment('Target unit tests (AND)', () => {
 
             expect(applies).to.exist().and.to.equal(false);
 
-            done();
         });
     });
 
@@ -91,7 +87,7 @@ experiment('Target unit tests (AND with RegExp)', () => {
         return context[key];
     }, { override: true });
 
-    test('should apply (full match: articles:writer)', (done) => {
+    test('should apply (full match: articles:writer)', () => {
 
         const information = {
             username: 'user00001',
@@ -105,11 +101,10 @@ experiment('Target unit tests (AND with RegExp)', () => {
 
             expect(applies).to.exist().and.to.equal(true);
 
-            done();
         });
     });
 
-    test('should apply (full match: articles:reader)', (done) => {
+    test('should apply (full match: articles:reader)', () => {
 
         const information = {
             username: 'user00002',
@@ -123,11 +118,10 @@ experiment('Target unit tests (AND with RegExp)', () => {
 
             expect(applies).to.exist().and.to.equal(true);
 
-            done();
         });
     });
 
-    test('should not apply (partial match)', (done) => {
+    test('should not apply (partial match)', () => {
 
         const information = {
             username: 'user00003',
@@ -141,11 +135,10 @@ experiment('Target unit tests (AND with RegExp)', () => {
 
             expect(applies).to.exist().and.to.equal(false);
 
-            done();
         });
     });
 
-    test('should not apply (no match)', (done) => {
+    test('should not apply (no match)', () => {
 
         const information = {
             username: 'user00004',
@@ -159,7 +152,6 @@ experiment('Target unit tests (AND with RegExp)', () => {
 
             expect(applies).to.exist().and.to.equal(false);
 
-            done();
         });
     });
 
@@ -177,7 +169,7 @@ experiment('Target unit tests (AND with field agains field matching)', () => {
     const externalContext = { 'some-field-name': 'some-field-value' };
     dataRetriever.register('external', (source, key, context) => externalContext[key], { override: true });
 
-    test('should apply (full match)', (done) => {
+    test('should apply (full match)', () => {
 
         const information = {
             username: 'user00001',
@@ -191,11 +183,10 @@ experiment('Target unit tests (AND with field agains field matching)', () => {
 
             expect(applies).to.exist().and.to.equal(true);
 
-            done();
         });
     });
 
-    test('should not apply (partial match)', (done) => {
+    test('should not apply (partial match)', () => {
 
         const information = {
             username: 'user00002',
@@ -209,11 +200,10 @@ experiment('Target unit tests (AND with field agains field matching)', () => {
 
             expect(applies).to.exist().and.to.equal(false);
 
-            done();
         });
     });
 
-    test('should not apply (no match)', (done) => {
+    test('should not apply (no match)', () => {
 
         const information = {
             username: 'user00003',
@@ -227,7 +217,6 @@ experiment('Target unit tests (AND with field agains field matching)', () => {
 
             expect(applies).to.exist().and.to.equal(false);
 
-            done();
         });
     });
 
@@ -248,7 +237,7 @@ experiment('Target unit tests (OR)', () => {
         return context[key];
     }, { override: true });
 
-    test('should apply (partial match)', (done) => {
+    test('should apply (partial match)', () => {
 
         const information = {
             username: 'user00001', // do not match
@@ -262,11 +251,10 @@ experiment('Target unit tests (OR)', () => {
 
             expect(applies).to.exist().and.to.equal(true);
 
-            done();
         });
     });
 
-    test('should apply (full match)', (done) => {
+    test('should apply (full match)', () => {
 
         const information = {
             username: 'user00002',
@@ -280,11 +268,10 @@ experiment('Target unit tests (OR)', () => {
 
             expect(applies).to.exist().and.to.equal(true);
 
-            done();
         });
     });
 
-    test('should not apply (no match)', (done) => {
+    test('should not apply (no match)', () => {
 
         const information = {
             username: 'user00003',
@@ -298,7 +285,6 @@ experiment('Target unit tests (OR)', () => {
 
             expect(applies).to.exist().and.to.equal(false);
 
-            done();
         });
     });
 
@@ -308,7 +294,7 @@ experiment('Target unit tests', () => {
 
     const dataRetriever = new DataRetrievalRouter();
 
-    test('should apply (partial match)', (done) => {
+    test('should apply (partial match)', () => {
 
         const invalidTarget = [];
 
@@ -316,7 +302,6 @@ experiment('Target unit tests', () => {
 
             expect(err).to.exist();
 
-            done();
         });
     });
 });

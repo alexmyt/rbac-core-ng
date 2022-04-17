@@ -1,7 +1,7 @@
 'use strict';
 
-const Code = require('code');
-const Lab = require('lab');
+const Code = require('@hapi/code');
+const Lab = require('@hapi/lab');
 
 const lab = exports.lab = Lab.script();
 const experiment = lab.experiment;
@@ -11,7 +11,6 @@ const expect = Code.expect;
 
 const Rbac = require('../');
 const DataRetrievalRouter = require('../lib/DataRetrievalRouter');
-
 
 experiment('Rule unit tests (permit)', () => {
 
@@ -27,7 +26,7 @@ experiment('Rule unit tests (permit)', () => {
         return context[key];
     }, { override: true });
 
-    test('should permit publisher administrator', (done) => {
+    test('should permit publisher administrator', () => {
 
         const information = {
             username: 'user00001',
@@ -40,11 +39,10 @@ experiment('Rule unit tests (permit)', () => {
 
             expect(result).to.exist().and.to.equal(Rbac.PERMIT);
 
-            done();
         });
     });
 
-    test('should be undetermined access to publisher', (done) => {
+    test('should be undetermined access to publisher', () => {
 
         const information = {
             username: 'user00002',
@@ -57,11 +55,10 @@ experiment('Rule unit tests (permit)', () => {
 
             expect(result).to.exist().and.to.equal(Rbac.UNDETERMINED);
 
-            done();
         });
     });
 
-    test('should be undetermined access to administrator', (done) => {
+    test('should be undetermined access to administrator', () => {
 
         const information = {
             username: 'user00003',
@@ -74,7 +71,6 @@ experiment('Rule unit tests (permit)', () => {
 
             expect(result).to.exist().and.to.equal(Rbac.UNDETERMINED);
 
-            done();
         });
     });
 
@@ -98,7 +94,7 @@ experiment('Rule unit tests (deny)', () => {
         return context[key];
     }, { override: true });
 
-    test('should deny user in blacklist group', (done) => {
+    test('should deny user in blacklist group', () => {
 
         const information = {
             username: 'user00001',
@@ -112,11 +108,10 @@ experiment('Rule unit tests (deny)', () => {
 
             expect(result).to.exist().and.to.equal(Rbac.DENY);
 
-            done();
         });
     });
 
-    test('should deny user in anonymous group', (done) => {
+    test('should deny user in anonymous group', () => {
 
         const information = {
             username: 'user00001',
@@ -130,11 +125,10 @@ experiment('Rule unit tests (deny)', () => {
 
             expect(result).to.exist().and.to.equal(Rbac.DENY);
 
-            done();
         });
     });
 
-    test('should deny not verified user', (done) => {
+    test('should deny not verified user', () => {
 
         const information = {
             username: 'user00001',
@@ -148,11 +142,10 @@ experiment('Rule unit tests (deny)', () => {
 
             expect(result).to.exist().and.to.equal(Rbac.DENY);
 
-            done();
         });
     });
 
-    test('should be undetermined', (done) => {
+    test('should be undetermined', () => {
 
         const information = {
             username: 'user00001',
@@ -166,7 +159,6 @@ experiment('Rule unit tests (deny)', () => {
 
             expect(result).to.exist().and.to.equal(Rbac.UNDETERMINED);
 
-            done();
         });
     });
 
@@ -177,17 +169,16 @@ experiment('Rule unit tests', () => {
     // Register mocked data retriever
     const dataRetriever = new DataRetrievalRouter();
 
-    test('should have error on missing rule', (done) => {
+    test('should have error on missing rule', () => {
 
         Rbac.evaluateRule(null, dataRetriever, (err, result) => {
 
             expect(err).to.exist();
 
-            done();
         });
     });
 
-    test('should have error on missing effect', (done) => {
+    test('should have error on missing effect', () => {
 
         const invalidRule = {
             target: [{ 'credentials:group': ['administrator', 'publisher'] }] // administrator AND publisher -> never use the same key twice in an object or it will be overriden
@@ -197,11 +188,10 @@ experiment('Rule unit tests', () => {
 
             expect(err).to.exist();
 
-            done();
         });
     });
 
-    test('should have error on invalid effect', (done) => {
+    test('should have error on invalid effect', () => {
 
         const invalidRule = {
             target: [{ 'credentials:group': ['administrator', 'publisher'] }], // administrator AND publisher -> never use the same key twice in an object or it will be overriden
@@ -212,7 +202,6 @@ experiment('Rule unit tests', () => {
 
             expect(err).to.exist();
 
-            done();
         });
     });
 });
